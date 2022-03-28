@@ -8,6 +8,7 @@ import VideoDownlinkBandwidthPolicy from '../videodownlinkbandwidthpolicy/VideoD
 import VideoUplinkBandwidthPolicy from '../videouplinkbandwidthpolicy/VideoUplinkBandwidthPolicy';
 import MeetingSessionCredentials from './MeetingSessionCredentials';
 import MeetingSessionURLs from './MeetingSessionURLs';
+import AttendeeCapabilities from '../attendee/AttendeeCapabilities';
 
 /**
  * [[MeetingSessionConfiguration]] contains the information necessary to start
@@ -33,6 +34,8 @@ export default class MeetingSessionConfiguration {
    * The URLs the session uses to reach the meeting service.
    */
   urls: MeetingSessionURLs | null = null;
+
+  attendeeCapabilities: AttendeeCapabilities | null = null;
 
   /**
    * Maximum amount of time in milliseconds to allow for connecting.
@@ -158,6 +161,8 @@ export default class MeetingSessionConfiguration {
       }
     }
     if (createAttendeeResponse) {
+      console.log("createAttendeeResponse");
+      console.log(createAttendeeResponse);
       createAttendeeResponse = toLowerCasePropertyNames(createAttendeeResponse);
       if (createAttendeeResponse.attendee) {
         createAttendeeResponse = createAttendeeResponse.attendee;
@@ -166,6 +171,10 @@ export default class MeetingSessionConfiguration {
       this.credentials.attendeeId = createAttendeeResponse.attendeeid;
       this.credentials.externalUserId = createAttendeeResponse.externaluserid;
       this.credentials.joinToken = createAttendeeResponse.jointoken;
+      this.attendeeCapabilities = new AttendeeCapabilities();
+      this.attendeeCapabilities.attendeeAudioCapability = createAttendeeResponse.capabilities.audio;
+      this.attendeeCapabilities.attendeeVideoCapability = createAttendeeResponse.capabilities.video;
+      this.attendeeCapabilities.attendeeContentCapability = createAttendeeResponse.capabilities.content;
     }
   }
 }

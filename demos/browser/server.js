@@ -140,6 +140,12 @@ function serve(host = '127.0.0.1:8080') {
           ExternalUserId: `${uuidv4().substring(0, 8)}#${requestUrl.query.name}`.substring(0, 64),
         }).promise();
 
+        attendee.Attendee.Capabilities = {
+          Audio : "Send",
+          Video : "Send",
+          Content: "Receive"
+        }
+
         // Return the meeting and attendee responses. The client will use these
         // to join the meeting.
         let joinResponse = {

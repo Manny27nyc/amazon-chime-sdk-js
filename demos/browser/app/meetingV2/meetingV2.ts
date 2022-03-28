@@ -7,6 +7,7 @@ import {
   ApplicationMetadata,
   AsyncScheduler,
   Attendee,
+  AttendeeCapabilityType,
   AudioInputDevice,
   AudioProfile,
   AudioVideoFacade,
@@ -250,6 +251,9 @@ export class DemoMeetingApp
 
   attendeeIdPresenceHandler: (undefined | ((attendeeId: string, present: boolean, externalUserId: string, dropped: boolean) => void)) = undefined;
   activeSpeakerHandler: (undefined | ((attendeeIds: string[]) => void)) = undefined;
+  attendeeAudioCapabilityHandler: (undefined | ((attendeeId: string) => void)) = undefined;
+  attendeeVideoCapabilityHandler: (undefined | ((attendeeId: string) => void)) = undefined;
+  attendeeContentCapabilityHandler: (undefined | ((attendeeId: string) => void)) = undefined;
   blurObserver: (undefined | BackgroundBlurVideoFrameProcessorObserver) = undefined;
   replacementObserver: (undefined | BackgroundReplacementVideoFrameProcessorObserver) = undefined;
 
@@ -326,6 +330,7 @@ export class DemoMeetingApp
   voiceFocusTransformer: VoiceFocusDeviceTransformer | undefined;
   voiceFocusDevice: VoiceFocusTransformDevice | undefined;
   joinInfo: any | undefined;
+
   deleteOwnAttendeeToLeave = false;
 
   blurProcessor: BackgroundBlurProcessor | undefined;
@@ -360,6 +365,11 @@ export class DemoMeetingApp
   partialTranscriptResultTimeMap = new Map<string, number>();
   partialTranscriptResultMap = new Map<string, TranscriptResult>();
   transcriptEntitySet = new Set<string>();
+  attendeeAudioCapability: string;
+  attendeeVideoCapability: string;
+  attendeeContentCapability: string;
+  attendeeInfo: any;
+
 
   addFatalHandlers(): void {
     fatal = this.fatal.bind(this);
@@ -604,6 +614,9 @@ export class DemoMeetingApp
       this.meeting = (document.getElementById('inputMeeting') as HTMLInputElement).value;
       this.name = (document.getElementById('inputName') as HTMLInputElement).value;
       this.region = (document.getElementById('inputRegion') as HTMLInputElement).value;
+      this.attendeeAudioCapability = (document.getElementById('inputAudioCapability') as HTMLInputElement).value;
+      this.attendeeVideoCapability = (document.getElementById('inputVideoCapability') as HTMLInputElement).value;
+      this.attendeeContentCapability = (document.getElementById('inputContentCapability') as HTMLInputElement).value;
       this.enableSimulcast = (document.getElementById('simulcast') as HTMLInputElement).checked;
       this.enableEventReporting = (document.getElementById('event-reporting') as HTMLInputElement).checked;
       this.deleteOwnAttendeeToLeave = (document.getElementById('delete-attendee') as HTMLInputElement).checked;
@@ -1928,9 +1941,77 @@ export class DemoMeetingApp
     const newRosterCount = Object.keys(this.roster).length;
     while (roster.getElementsByTagName('li').length < newRosterCount) {
       const li = document.createElement('li');
-      li.className = 'list-group-item d-flex justify-content-between align-items-center';
-      li.appendChild(document.createElement('span'));
-      li.appendChild(document.createElement('span'));
+      li.className = 'list-group-item  align-items-center';
+		  const div = document.createElement('div');
+		  div.className =  'd-flex justify-content-between';
+		  li.appendChild(div);
+		  div.appendChild(document.createElement('span'));
+		  div.appendChild(document.createElement('span'));
+// 		  const capabilitiesCount = 3;
+		  li.appendChild(document.createElement('label'));
+		  const select1 = document.createElement("select");
+		  const select2 = document.createElement("select");
+		  const select3 = document.createElement("select");
+		  select1.id = 'attendee-audio-capability';
+		  select2.id = 'attendee-video-capability';
+		  select3.id = 'attendee-content-capability';
+		  const attendeeCapTypes = Object.values(AttendeeCapabilityType);
+		  for (let i = attendeeCapTypes.length -1; i >=0; i--)
+		  {
+	        const option = document.createElement('option');
+          option.text = attendeeCapTypes[i];
+          option.value = attendeeCapTypes[i];
+          if (this.meetingSession.configuration.attendeeCapabilities.attendeeAudioCapability === attendeeCapTypes[i]) {
+								option.selected = true;
+          }
+          select1.appendChild(option);
+		  }
+		  li.appendChild(select1);
+		  li.appendChild(document.createElement('label'));
+		  for (let i = attendeeCapTypes.length -1; i >=0; i--)
+      {
+          const option = document.createElement('option');
+          select2.appendChild(option);
+          option.text = attendeeCapTypes[i];
+          option.value = attendeeCapTypes[i];
+          if (this.meetingSession.configuration.attendeeCapabilities.attendeeVideoCapability === attendeeCapTypes[i]) {
+                option.selected = true;
+          }
+          select2.appendChild(option);
+      }
+      li.appendChild(select2);
+      li.appendChild(document.createElement('label'));
+      
+      for (let i = attendeeCapTypes.length -1; i >=0; i--)
+			  {
+			      const option = document.createElement('option');
+			      select3.appendChild(option);
+			      option.text = attendeeCapTypes[i];
+			      option.value = attendeeCapTypes[i];
+			      if (this.meetingSession.configuration.attendeeCapabilities.attendeeContentCapability === attendeeCapTypes[i]) {
+	                option.selected = true;
+	          }
+			  }
+      li.appendChild(select3);
+      const updateButton = document.createElement('button');
+      updateButton.className = 'btn btn-outline-success mx-1 mx-xl-2 my-2 px-4 button-update-attendee-cap';
+      updateButton.title = 'Update';
+      updateButton.innerText = 'Update';
+      li.appendChild(updateButton);
+      const getButton = document.createElement('button');
+      getButton.className = 'btn btn-outline-success mx-1 mx-xl-2 my-2 px-4 button-get-attendee';
+      getButton.title = 'Get';
+      getButton.innerText = 'Get';
+      li.appendChild(getButton);
+      const getOutputAudio = document.createElement('div');
+      getOutputAudio.id = "get-attendee-audio-output";
+      li.appendChild(getOutputAudio);
+      const getOutputVideo = document.createElement('div');
+      getOutputVideo.id = "get-attendee-video-output";
+      li.appendChild(getOutputVideo);
+      const getOutputContent = document.createElement('div');
+      getOutputContent.id = "get-attendee-content-output";
+      li.appendChild(getOutputContent);
       roster.appendChild(li);
     }
     while (roster.getElementsByTagName('li').length > newRosterCount) {
@@ -1939,8 +2020,17 @@ export class DemoMeetingApp
     const entries = roster.getElementsByTagName('li');
     let i = 0;
     for (const attendeeId in this.roster) {
-      const spanName = entries[i].getElementsByTagName('span')[0];
-      const spanStatus = entries[i].getElementsByTagName('span')[1];
+      const spanName = entries[i].getElementsByTagName('div')[0].getElementsByTagName('span')[0];
+      const spanStatus = entries[i].getElementsByTagName('div')[0].getElementsByTagName('span')[1];
+      const label1 = entries[i].getElementsByTagName('label')[0];
+      const label2 = entries[i].getElementsByTagName('label')[1];
+      const label3 = entries[i].getElementsByTagName('label')[2];
+      label1.htmlFor = 'attendee-audio-capability';
+      label1.innerText = 'Audio';
+      label2.htmlFor = 'attendee-video-capability';
+      label2.innerText = 'Video';
+      label3.htmlFor = 'attendee-content-capability';
+      label3.innerText = 'Content';
       let statusClass = 'badge badge-pill ';
       let statusText = '\xa0'; // &nbsp
       if (this.roster[attendeeId].signalStrength < 1) {
@@ -1957,6 +2047,65 @@ export class DemoMeetingApp
       this.updateProperty(spanName, 'innerText', this.roster[attendeeId].name);
       this.updateProperty(spanStatus, 'innerText', statusText);
       this.updateProperty(spanStatus, 'className', statusClass);
+      // const attendeeCapTypes = Object.values(AttendeeCapabilityType);
+      const audio_cap = entries[i].getElementsByTagName('select')[0];
+      const video_cap = entries[i].getElementsByTagName('select')[1];
+      const content_cap = entries[i].getElementsByTagName('select')[2];
+        // this.attendeeInfo = this.getAttendee(this.roster[attendeeId].name);
+        // const audio_options = audio_cap.getElementsByTagName('option');
+        // const video_options = video_cap.getElementsByTagName('option');
+        // const content_options = content_cap.getElementsByTagName('option');
+      console.log('Inside UpdateRoster');
+      // console.log(audio_options[0].text);
+      // console.log(this.attendeeInfo);
+      // for (let j = 0; j<audio_options.length; j++) { 
+      //   if (this.attendeeInfo.Attendee.Capabilities.Audio === audio_options[j].text)
+      //     audio_options[j].selected = true;
+      // }
+      // for (let j = 0; j<video_options.length; j++) { 
+      //   if (this.attendeeInfo.Attendee.Capabilities.Video === video_options[j].text)
+      //     video_options[j].selected = true;
+      // }
+      // for (let j = 0; j<content_options.length; j++) { 
+      //   if (this.attendeeInfo.Attendee.Capabilities.Content === content_options[j].text)
+      //     content_options[j].selected = true;
+      // }
+      // for (let j = attendeeCapTypes.length -1; j >=0; j--){
+          
+
+      //     if (this.attendeeInfo.Attendee.Capabilities.Audio === attendeeCapTypes[j]) {
+      //           option.selected = true;
+      //     }
+      // }
+      // for (let j = attendeeCapTypes.length-1; j >=0; j--){
+      //   const option = video_cap.getElementsByTagName('option')[i];
+      //   option.text = attendeeCapTypes[j];
+      //   option.value = attendeeCapTypes[j];
+      //   if (this.attendeeInfo.Attendee.Capabilities.Audio === attendeeCapTypes[j]) {
+      //         option.selected = true;
+
+      //   }
+      // }
+      // for (let j = attendeeCapTypes.length-1; j >=0; j--){
+      //     const option = content_cap.getElementsByTagName('option')[];
+      //     option.text = attendeeCapTypes[j];
+      //     option.value = attendeeCapTypes[j];
+      //     if (this.attendeeInfo.Attendee.Capabilities.Audio === attendeeCapTypes[j]) {
+      //           option.selected = true;
+      //     }
+      // }
+      const updateButtons = document.getElementsByClassName('button-update-attendee-cap');
+      updateButtons[i].addEventListener('click', () => {
+        this.updateAttendeeCapabilities(
+          this.roster[attendeeId], 
+          audio_cap.options[audio_cap.selectedIndex].value,
+          video_cap.options[video_cap.selectedIndex].value,
+          content_cap.options[content_cap.selectedIndex].value);
+      });
+      const getButtons = document.getElementsByClassName('button-get-attendee');
+      getButtons[i].addEventListener('click', () => {
+        this.showAttendeeCapabilities(this.roster[attendeeId].name);
+      });
       i++;
     }
   }
@@ -2342,12 +2491,24 @@ export class DemoMeetingApp
     meeting: string,
     name: string,
     region: string,
-    primaryExternalMeetingId?: string): Promise<any> {
+    primaryExternalMeetingId?: string,
+    attendeeAudioCapability?: string,
+    attendeeVideoCapability?: string,
+    attendeeContentCapability?: string): Promise<any> {
     let uri = `${DemoMeetingApp.BASE_URL}join?title=${encodeURIComponent(
       meeting
     )}&name=${encodeURIComponent(name)}&region=${encodeURIComponent(region)}`
     if (primaryExternalMeetingId) {
       uri += `&primaryExternalMeetingId=${primaryExternalMeetingId}`;
+    }
+    if (attendeeAudioCapability) {
+      uri += `&attendeeAudioCapability=${attendeeAudioCapability}`;
+    }
+    if (attendeeVideoCapability) {
+      uri += `&attendeeVideoCapability=${attendeeVideoCapability}`;
+    }
+    if (attendeeContentCapability) {
+      uri += `&attendeeContentCapability=${attendeeContentCapability}`;
     }
     uri += `&ns_es=${this.echoReductionCapability}`
     const response = await fetch(uri,
@@ -2396,16 +2557,18 @@ export class DemoMeetingApp
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async getAttendee(attendeeId: string): Promise<any> {
+  async getAttendee(name: string): Promise<any> {
     const response = await fetch(
-      `${DemoMeetingApp.BASE_URL}attendee?title=${encodeURIComponent(
-        this.meeting
-      )}&attendee=${encodeURIComponent(attendeeId)}`
-    );
+      `${DemoMeetingApp.BASE_URL}get_attendee?title=${encodeURIComponent(this.meeting)}&name=${encodeURIComponent(name)}`,
+      {
+        method: 'GET',
+      });
+    console.log('getAttendee');
     const json = await response.json();
     if (json.error) {
       throw new Error(`Server error: ${json.error}`);
     }
+    console.log(json);
     return json;
   }
 
@@ -2561,6 +2724,41 @@ export class DemoMeetingApp
     await this.populateAudioInputList();
     await this.populateVideoInputList();
     await this.populateAudioOutputList();
+  }
+
+  async updateAttendeeCapabilities(attendee: any, 
+    audio_capability: string, 
+    video_capability: string,
+    content_capability: string) : Promise<void> {
+    console.log("updateAttendeeCapabilities");
+    console.log("audio_capability");
+    console.log(audio_capability);
+    console.log("video_capability");
+    console.log(video_capability);
+    console.log("content_capability");
+    console.log(content_capability);
+    console.log(attendee);
+    let uri = `${DemoMeetingApp.BASE_URL}update_attendee_capabilities?title=${encodeURIComponent(
+      this.meeting
+    )}&name=${encodeURIComponent(
+      attendee.name
+    )}&audio_capability=${encodeURIComponent(
+      audio_capability
+    )}&video_capability=${encodeURIComponent(
+      video_capability
+    )}&content_capability=${encodeURIComponent(content_capability)}`
+    console.log(uri);
+    const response = await fetch(uri,
+      {
+        method: 'PUT',
+      }
+    );
+    const json = await response.json();
+    if (json.error) {
+      throw new Error(`Server error: ${json.error}`);
+    }
+    console.log(json);
+    return json;
   }
 
   private async selectVideoFilterByName(name: VideoFilterName): Promise<void> {
@@ -3429,6 +3627,15 @@ export class DemoMeetingApp
     }
   }
 
+  private async showAttendeeCapabilities(name: string): Promise<void> {
+    console.log("showAttendeeCapabilities")
+    this.attendeeInfo = await this.getAttendee(name);
+    console.log(this.attendeeInfo.attendeeResponse);
+    document.getElementById('get-attendee-audio-output').innerHTML = 'Audio: ' + this.attendeeInfo.attendeeResponse.Attendee.Capabilities.Audio;
+    document.getElementById('get-attendee-video-output').innerHTML = 'Video: ' + this.attendeeInfo.attendeeResponse.Attendee.Capabilities.Video;
+    document.getElementById('get-attendee-content-output').innerHTML = 'Content: ' + this.attendeeInfo.attendeeResponse.Attendee.Capabilities.Content;
+  }
+
   private updateContentShareDropdown(enabled: boolean): void {
     document.getElementById('dropdown-item-content-share-screen-capture').style.display = enabled ? 'none' : 'block';
     document.getElementById('dropdown-item-content-share-screen-test-video').style.display = enabled ? 'none' : 'block';
@@ -3452,7 +3659,7 @@ export class DemoMeetingApp
   }
 
   async authenticate(): Promise<string> {
-    this.joinInfo = (await this.sendJoinRequest(this.meeting, this.name, this.region, this.primaryExternalMeetingId)).JoinInfo;
+    this.joinInfo = (await this.sendJoinRequest(this.meeting, this.name, this.region, this.primaryExternalMeetingId, this.attendeeAudioCapability, this.attendeeVideoCapability, this.attendeeContentCapability)).JoinInfo;
     const configuration = new MeetingSessionConfiguration(this.joinInfo.Meeting, this.joinInfo.Attendee);
     await this.initializeMeetingSession(configuration);
     this.primaryExternalMeetingId = this.joinInfo.PrimaryExternalMeetingId

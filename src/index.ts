@@ -8,6 +8,8 @@ import AssetSpec from './voicefocus/AssetSpec';
 import AsyncScheduler from './scheduler/AsyncScheduler';
 import AttachMediaInputTask from './task/AttachMediaInputTask';
 import Attendee from './attendee/Attendee';
+import AttendeeCapabilities from './attendee/AttendeeCapabilities';
+import AttendeeCapabilityType from './attendee/AttendeeCapabilityType';
 import AudioInputDevice from './devicecontroller/AudioInputDevice';
 import AudioLogEvent from './statscollector/AudioLogEvent';
 import AudioMixController from './audiomixcontroller/AudioMixController';
@@ -327,6 +329,8 @@ export {
   AsyncScheduler,
   AttachMediaInputTask,
   Attendee,
+  AttendeeCapabilities,
+  AttendeeCapabilityType,
   AudioInputDevice,
   AudioLogEvent,
   AudioMixController,
