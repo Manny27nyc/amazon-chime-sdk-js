@@ -1480,7 +1480,16 @@ export class DemoMeetingApp
 
   private async getPrimaryMeetingCredentials(): Promise<MeetingSessionCredentials> {
     // Use the same join endpoint, but point it to the provided primary meeting title and give us an arbitrarily different user name
-    const joinInfo = (await this.sendJoinRequest(this.primaryExternalMeetingId, `promoted-${this.name}`, this.region)).JoinInfo;
+    const joinInfo = (await this.sendJoinRequest(
+      this.primaryExternalMeetingId,
+        `promoted-${this.name}`,
+        this.region,
+        null,
+        this.meetingSession.configuration.attendeeCapabilities.attendeeAudioCapability,
+        this.meetingSession.configuration.attendeeCapabilities.attendeeVideoCapability,
+        this.meetingSession.configuration.attendeeCapabilities.attendeeContentCapability
+      )
+    ).JoinInfo;
     // To avoid duplicating code we reuse the constructor for `MeetingSessionConfiguration` which contains `MeetingSessionCredentials`
     // within it and properly does the parsing of the `chime::CreateAttendee` response
     const configuration = new MeetingSessionConfiguration(joinInfo.Meeting, joinInfo.Attendee);
@@ -3587,6 +3596,11 @@ export class DemoMeetingApp
     videoSelection.options.item(Object.values(AttendeeCapabilityType).indexOf(attendeeInfo.Attendee.Capabilities.Video)).selected = true;
     const contentSelection = document.getElementById('content-' + id) as HTMLSelectElement;
     contentSelection.options.item(Object.values(AttendeeCapabilityType).indexOf(attendeeInfo.Attendee.Capabilities.Content)).selected = true;
+    if (this.meetingSession.configuration.credentials.attendeeId === id) {
+      this.meetingSession.configuration.attendeeCapabilities.attendeeAudioCapability = attendeeInfo.Attendee.Capabilities.Audio;
+      this.meetingSession.configuration.attendeeCapabilities.attendeeVideoCapability = attendeeInfo.Attendee.Capabilities.Video;
+      this.meetingSession.configuration.attendeeCapabilities.attendeeContentCapability = attendeeInfo.Attendee.Capabilities.Content;
+    }
   }
 
   private updateContentShareDropdown(enabled: boolean): void {
@@ -3612,7 +3626,15 @@ export class DemoMeetingApp
   }
 
   async authenticate(): Promise<string> {
-    this.joinInfo = (await this.sendJoinRequest(this.meeting, this.name, this.region, this.primaryExternalMeetingId, this.attendeeAudioCapability, this.attendeeVideoCapability, this.attendeeContentCapability)).JoinInfo;
+    this.joinInfo = (await this.sendJoinRequest(
+      this.meeting,
+      this.name,
+      this.region,
+      this.primaryExternalMeetingId,
+      this.attendeeAudioCapability,
+      this.attendeeVideoCapability,
+      this.attendeeContentCapability
+    )).JoinInfo;
     const configuration = new MeetingSessionConfiguration(this.joinInfo.Meeting, this.joinInfo.Attendee);
     await this.initializeMeetingSession(configuration);
     this.primaryExternalMeetingId = this.joinInfo.PrimaryExternalMeetingId
