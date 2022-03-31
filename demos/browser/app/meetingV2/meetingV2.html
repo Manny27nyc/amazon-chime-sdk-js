@@ -638,6 +638,36 @@
       <div id="roster-message-container" class="d-flex flex-column col-12 col-sm-5 col-md-4 col-lg-3 h-100">
         <div class="bs-component" style="flex: 1 1 auto; overflow-y: auto; height: 50%;">
           <ul id="roster" class="list-group"></ul>
+          <li class="list-group-item  align-items-center">
+            <div class="d-flex justify-content-between">
+              <span>update attendee capabilities except</span>
+              <textarea id="update-attendee-cap-except-ids" rows="1"></textarea>
+              </div>
+            <label for="attendee-audio-capability">Audio</label>
+            <select id="attendee-audio-capability">
+              <option value="SendReceive">SendReceive</option>
+              <option value="Send">Send</option>
+              <option value="Receive">Receive</option>
+              <option value="None">None</option>
+            </select>
+            <label for="attendee-video-capability">Video</label>
+            <select id="attendee-video-capability">
+              <option value="SendReceive">SendReceive</option>
+              <option value="Send">Send</option>
+              <option value="Receive">Receive</option>
+              <option value="None">None</option>
+            </select>
+            <label for="attendee-content-capability">Content</label>
+            <select id="attendee-content-capability">
+              <option value="SendReceive">SendReceive</option>
+              <option value="Send">Send</option>
+              <option value="Receive">Receive</option>
+              <option value="None">None</option>
+            </select>
+            <button class="btn btn-outline-success mx-1 mx-xl-2 my-2 px-4" id="button-update-attendee-cap-except" title="Update Except">Update Except</button>
+          </li>
+
+
         </div>
         <div class="message d-flex flex-column pt-3" style="flex: 1 1 auto; overflow: hidden; height: 50%;">
           <div class="list-group receive-message" id="receive-message" style="flex: 1 1 auto; overflow-y: auto;

@@ -614,9 +614,9 @@ export class DemoMeetingApp
       this.meeting = (document.getElementById('inputMeeting') as HTMLInputElement).value;
       this.name = (document.getElementById('inputName') as HTMLInputElement).value;
       this.region = (document.getElementById('inputRegion') as HTMLInputElement).value;
-      this.attendeeAudioCapability = (document.getElementById('inputAudioCapability') as HTMLInputElement).value;
-      this.attendeeVideoCapability = (document.getElementById('inputVideoCapability') as HTMLInputElement).value;
-      this.attendeeContentCapability = (document.getElementById('inputContentCapability') as HTMLInputElement).value;
+      this.attendeeAudioCapability = (document.getElementById('inputAudioCapability') as HTMLSelectElement).value;
+      this.attendeeVideoCapability = (document.getElementById('inputVideoCapability') as HTMLSelectElement).value;
+      this.attendeeContentCapability = (document.getElementById('inputContentCapability') as HTMLSelectElement).value;
       this.enableSimulcast = (document.getElementById('simulcast') as HTMLInputElement).checked;
       this.enableEventReporting = (document.getElementById('event-reporting') as HTMLInputElement).checked;
       this.deleteOwnAttendeeToLeave = (document.getElementById('delete-attendee') as HTMLInputElement).checked;
@@ -1838,6 +1838,7 @@ export class DemoMeetingApp
     this.setupMuteHandler();
     this.setupCanUnmuteHandler();
     this.setupSubscribeToAttendeeIdPresenceHandler();
+    this.setupUpdateAttendeeCapHandler();
     this.setupDataMessage();
     this.setupLiveTranscription();
     this.audioVideo.addObserver(this);
@@ -1936,6 +1937,18 @@ export class DemoMeetingApp
     handler(this.audioVideo.realtimeCanUnmuteLocalAudio());
   }
 
+  private getCapabilitySelection(): HTMLSelectElement {
+    const select = document.createElement('select');
+    const options = Object.values(AttendeeCapabilityType);
+    for (let option of options) {
+      const optionElement = document.createElement('option');
+      optionElement.text = option;
+      optionElement.value = option;
+      select.appendChild(optionElement);
+    }
+    return select;
+  }
+
   updateRoster(): void {
     const roster = document.getElementById('roster');
     const newRosterCount = Object.keys(this.roster).length;
@@ -1947,52 +1960,18 @@ export class DemoMeetingApp
 		  li.appendChild(div);
 		  div.appendChild(document.createElement('span'));
 		  div.appendChild(document.createElement('span'));
-// 		  const capabilitiesCount = 3;
-		  li.appendChild(document.createElement('label'));
-		  const select1 = document.createElement("select");
-		  const select2 = document.createElement("select");
-		  const select3 = document.createElement("select");
-		  select1.id = 'attendee-audio-capability';
-		  select2.id = 'attendee-video-capability';
-		  select3.id = 'attendee-content-capability';
-		  const attendeeCapTypes = Object.values(AttendeeCapabilityType);
-		  for (let i = attendeeCapTypes.length -1; i >=0; i--)
-		  {
-	        const option = document.createElement('option');
-          option.text = attendeeCapTypes[i];
-          option.value = attendeeCapTypes[i];
-          if (this.meetingSession.configuration.attendeeCapabilities.attendeeAudioCapability === attendeeCapTypes[i]) {
-								option.selected = true;
-          }
-          select1.appendChild(option);
-		  }
-		  li.appendChild(select1);
-		  li.appendChild(document.createElement('label'));
-		  for (let i = attendeeCapTypes.length -1; i >=0; i--)
-      {
-          const option = document.createElement('option');
-          select2.appendChild(option);
-          option.text = attendeeCapTypes[i];
-          option.value = attendeeCapTypes[i];
-          if (this.meetingSession.configuration.attendeeCapabilities.attendeeVideoCapability === attendeeCapTypes[i]) {
-                option.selected = true;
-          }
-          select2.appendChild(option);
-      }
-      li.appendChild(select2);
-      li.appendChild(document.createElement('label'));
-      
-      for (let i = attendeeCapTypes.length -1; i >=0; i--)
-			  {
-			      const option = document.createElement('option');
-			      select3.appendChild(option);
-			      option.text = attendeeCapTypes[i];
-			      option.value = attendeeCapTypes[i];
-			      if (this.meetingSession.configuration.attendeeCapabilities.attendeeContentCapability === attendeeCapTypes[i]) {
-	                option.selected = true;
-	          }
-			  }
-      li.appendChild(select3);
+      const audioLabel = document.createElement('label');
+      audioLabel.innerText = 'Audio';
+      li.appendChild(audioLabel);
+		  li.appendChild(this.getCapabilitySelection());
+      const videoLabel = document.createElement('label');
+      videoLabel.innerText = 'Video';
+      li.appendChild(videoLabel);
+      li.appendChild(this.getCapabilitySelection());
+      const contentLabel = document.createElement('label');
+      contentLabel.innerText = 'Content';
+      li.appendChild(contentLabel);
+      li.appendChild(this.getCapabilitySelection());
       const updateButton = document.createElement('button');
       updateButton.className = 'btn btn-outline-success mx-1 mx-xl-2 my-2 px-4 button-update-attendee-cap';
       updateButton.title = 'Update';
@@ -2003,15 +1982,6 @@ export class DemoMeetingApp
       getButton.title = 'Get';
       getButton.innerText = 'Get';
       li.appendChild(getButton);
-      const getOutputAudio = document.createElement('div');
-      getOutputAudio.id = "get-attendee-audio-output";
-      li.appendChild(getOutputAudio);
-      const getOutputVideo = document.createElement('div');
-      getOutputVideo.id = "get-attendee-video-output";
-      li.appendChild(getOutputVideo);
-      const getOutputContent = document.createElement('div');
-      getOutputContent.id = "get-attendee-content-output";
-      li.appendChild(getOutputContent);
       roster.appendChild(li);
     }
     while (roster.getElementsByTagName('li').length > newRosterCount) {
@@ -2022,15 +1992,6 @@ export class DemoMeetingApp
     for (const attendeeId in this.roster) {
       const spanName = entries[i].getElementsByTagName('div')[0].getElementsByTagName('span')[0];
       const spanStatus = entries[i].getElementsByTagName('div')[0].getElementsByTagName('span')[1];
-      const label1 = entries[i].getElementsByTagName('label')[0];
-      const label2 = entries[i].getElementsByTagName('label')[1];
-      const label3 = entries[i].getElementsByTagName('label')[2];
-      label1.htmlFor = 'attendee-audio-capability';
-      label1.innerText = 'Audio';
-      label2.htmlFor = 'attendee-video-capability';
-      label2.innerText = 'Video';
-      label3.htmlFor = 'attendee-content-capability';
-      label3.innerText = 'Content';
       let statusClass = 'badge badge-pill ';
       let statusText = '\xa0'; // &nbsp
       if (this.roster[attendeeId].signalStrength < 1) {
@@ -2047,64 +2008,26 @@ export class DemoMeetingApp
       this.updateProperty(spanName, 'innerText', this.roster[attendeeId].name);
       this.updateProperty(spanStatus, 'innerText', statusText);
       this.updateProperty(spanStatus, 'className', statusClass);
-      // const attendeeCapTypes = Object.values(AttendeeCapabilityType);
-      const audio_cap = entries[i].getElementsByTagName('select')[0];
-      const video_cap = entries[i].getElementsByTagName('select')[1];
-      const content_cap = entries[i].getElementsByTagName('select')[2];
-        // this.attendeeInfo = this.getAttendee(this.roster[attendeeId].name);
-        // const audio_options = audio_cap.getElementsByTagName('option');
-        // const video_options = video_cap.getElementsByTagName('option');
-        // const content_options = content_cap.getElementsByTagName('option');
-      console.log('Inside UpdateRoster');
-      // console.log(audio_options[0].text);
-      // console.log(this.attendeeInfo);
-      // for (let j = 0; j<audio_options.length; j++) { 
-      //   if (this.attendeeInfo.Attendee.Capabilities.Audio === audio_options[j].text)
-      //     audio_options[j].selected = true;
-      // }
-      // for (let j = 0; j<video_options.length; j++) { 
-      //   if (this.attendeeInfo.Attendee.Capabilities.Video === video_options[j].text)
-      //     video_options[j].selected = true;
-      // }
-      // for (let j = 0; j<content_options.length; j++) { 
-      //   if (this.attendeeInfo.Attendee.Capabilities.Content === content_options[j].text)
-      //     content_options[j].selected = true;
-      // }
-      // for (let j = attendeeCapTypes.length -1; j >=0; j--){
-          
-
-      //     if (this.attendeeInfo.Attendee.Capabilities.Audio === attendeeCapTypes[j]) {
-      //           option.selected = true;
-      //     }
-      // }
-      // for (let j = attendeeCapTypes.length-1; j >=0; j--){
-      //   const option = video_cap.getElementsByTagName('option')[i];
-      //   option.text = attendeeCapTypes[j];
-      //   option.value = attendeeCapTypes[j];
-      //   if (this.attendeeInfo.Attendee.Capabilities.Audio === attendeeCapTypes[j]) {
-      //         option.selected = true;
-
-      //   }
-      // }
-      // for (let j = attendeeCapTypes.length-1; j >=0; j--){
-      //     const option = content_cap.getElementsByTagName('option')[];
-      //     option.text = attendeeCapTypes[j];
-      //     option.value = attendeeCapTypes[j];
-      //     if (this.attendeeInfo.Attendee.Capabilities.Audio === attendeeCapTypes[j]) {
-      //           option.selected = true;
-      //     }
-      // }
+      const audio_cap = entries[i].getElementsByTagName('select')[0] as HTMLSelectElement;
+      audio_cap.id = "audio-" + attendeeId;
+      const video_cap = entries[i].getElementsByTagName('select')[1] as HTMLSelectElement;
+      video_cap.id = "video-" + attendeeId;
+      const content_cap = entries[i].getElementsByTagName('select')[2] as HTMLSelectElement;
+      content_cap.id = "content-" + attendeeId;
+      audio_cap.options.item(Object.values(AttendeeCapabilityType).indexOf(this.meetingSession.configuration.attendeeCapabilities.attendeeAudioCapability)).selected = true;
+      video_cap.options.item(Object.values(AttendeeCapabilityType).indexOf(this.meetingSession.configuration.attendeeCapabilities.attendeeVideoCapability)).selected = true;
+      content_cap.options.item(Object.values(AttendeeCapabilityType).indexOf(this.meetingSession.configuration.attendeeCapabilities.attendeeContentCapability)).selected = true;
       const updateButtons = document.getElementsByClassName('button-update-attendee-cap');
       updateButtons[i].addEventListener('click', () => {
         this.updateAttendeeCapabilities(
-          this.roster[attendeeId], 
+          attendeeId,
           audio_cap.options[audio_cap.selectedIndex].value,
           video_cap.options[video_cap.selectedIndex].value,
           content_cap.options[content_cap.selectedIndex].value);
       });
       const getButtons = document.getElementsByClassName('button-get-attendee');
       getButtons[i].addEventListener('click', () => {
-        this.showAttendeeCapabilities(this.roster[attendeeId].name);
+        this.getAttendeeCapabilities(attendeeId);
       });
       i++;
     }
@@ -2215,6 +2138,22 @@ export class DemoMeetingApp
       scoreHandler,
       this.showActiveSpeakerScores ? 100 : 0
     );
+  }
+
+  setupUpdateAttendeeCapHandler(): void {
+    const updateButton = document.getElementById('button-update-attendee-cap-except');
+    updateButton.addEventListener('click', () => {
+      const exceptIdsTextArea = document.getElementById('update-attendee-cap-except-ids') as HTMLTextAreaElement;
+      const exceptIds = exceptIdsTextArea.value.trim();
+      const audio_cap = document.getElementById('attendee-audio-capability') as HTMLSelectElement;
+      const video_cap = document.getElementById('attendee-video-capability') as HTMLSelectElement;
+      const content_cap = document.getElementById('attendee-content-capability') as HTMLSelectElement;
+      this.updateAttendeeCapabilitiesExcept(
+        exceptIds,
+        audio_cap.options[audio_cap.selectedIndex].value,
+        video_cap.options[video_cap.selectedIndex].value,
+        content_cap.options[content_cap.selectedIndex].value);
+    });
   }
 
   dataMessageHandler(dataMessage: DataMessage): void {
@@ -2557,13 +2496,10 @@ export class DemoMeetingApp
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async getAttendee(name: string): Promise<any> {
+  async getAttendee(id: string): Promise<any> {
     const response = await fetch(
-      `${DemoMeetingApp.BASE_URL}get_attendee?title=${encodeURIComponent(this.meeting)}&name=${encodeURIComponent(name)}`,
-      {
-        method: 'GET',
-      });
-    console.log('getAttendee');
+      `${DemoMeetingApp.BASE_URL}get_attendee?title=${encodeURIComponent(this.meeting)}&id=${encodeURIComponent(id)}`,
+      { method: 'GET' });
     const json = await response.json();
     if (json.error) {
       throw new Error(`Server error: ${json.error}`);
@@ -2726,22 +2662,14 @@ export class DemoMeetingApp
     await this.populateAudioOutputList();
   }
 
-  async updateAttendeeCapabilities(attendee: any, 
+  async updateAttendeeCapabilities(attendeeId: string,
     audio_capability: string, 
     video_capability: string,
     content_capability: string) : Promise<void> {
-    console.log("updateAttendeeCapabilities");
-    console.log("audio_capability");
-    console.log(audio_capability);
-    console.log("video_capability");
-    console.log(video_capability);
-    console.log("content_capability");
-    console.log(content_capability);
-    console.log(attendee);
     let uri = `${DemoMeetingApp.BASE_URL}update_attendee_capabilities?title=${encodeURIComponent(
       this.meeting
-    )}&name=${encodeURIComponent(
-      attendee.name
+    )}&id=${encodeURIComponent(
+      attendeeId
     )}&audio_capability=${encodeURIComponent(
       audio_capability
     )}&video_capability=${encodeURIComponent(
@@ -2760,6 +2688,30 @@ export class DemoMeetingApp
     console.log(json);
     return json;
   }
+
+  async updateAttendeeCapabilitiesExcept(attendees: string,
+                                   audio_capability: string,
+                                   video_capability: string,
+                                   content_capability: string) : Promise<void> {
+    let uri = `${DemoMeetingApp.BASE_URL}update_attendee_capabilities_except?title=${encodeURIComponent(
+      this.meeting
+    )}&ids=${encodeURIComponent(
+      attendees
+    )}&audio_capability=${encodeURIComponent(
+      audio_capability
+    )}&video_capability=${encodeURIComponent(
+      video_capability
+    )}&content_capability=${encodeURIComponent(content_capability)}`
+    console.log(uri);
+    const response = await fetch(uri, { method: 'POST' });
+    const json = await response.json();
+    if (json.error) {
+      throw new Error(`Server error: ${json.error}`);
+    }
+    console.log(json);
+    return json;
+  }
+
 
   private async selectVideoFilterByName(name: VideoFilterName): Promise<void> {
     this.selectedVideoFilterItem = name;
@@ -3627,13 +3579,14 @@ export class DemoMeetingApp
     }
   }
 
-  private async showAttendeeCapabilities(name: string): Promise<void> {
-    console.log("showAttendeeCapabilities")
-    this.attendeeInfo = await this.getAttendee(name);
-    console.log(this.attendeeInfo.attendeeResponse);
-    document.getElementById('get-attendee-audio-output').innerHTML = 'Audio: ' + this.attendeeInfo.attendeeResponse.Attendee.Capabilities.Audio;
-    document.getElementById('get-attendee-video-output').innerHTML = 'Video: ' + this.attendeeInfo.attendeeResponse.Attendee.Capabilities.Video;
-    document.getElementById('get-attendee-content-output').innerHTML = 'Content: ' + this.attendeeInfo.attendeeResponse.Attendee.Capabilities.Content;
+  private async getAttendeeCapabilities(id: string): Promise<void> {
+    const attendeeInfo = await this.getAttendee(id);
+    const audioSelection = document.getElementById('audio-' + id) as HTMLSelectElement;
+    audioSelection.options.item(Object.values(AttendeeCapabilityType).indexOf(attendeeInfo.Attendee.Capabilities.Audio)).selected = true;
+    const videoSelection = document.getElementById('video-' + id) as HTMLSelectElement;
+    videoSelection.options.item(Object.values(AttendeeCapabilityType).indexOf(attendeeInfo.Attendee.Capabilities.Video)).selected = true;
+    const contentSelection = document.getElementById('content-' + id) as HTMLSelectElement;
+    contentSelection.options.item(Object.values(AttendeeCapabilityType).indexOf(attendeeInfo.Attendee.Capabilities.Content)).selected = true;
   }
 
   private updateContentShareDropdown(enabled: boolean): void {

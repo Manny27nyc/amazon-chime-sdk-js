@@ -141,9 +141,9 @@ function serve(host = '127.0.0.1:8080') {
         }).promise();
 
         attendee.Attendee.Capabilities = {
-          Audio : "Send",
-          Video : "Send",
-          Content: "Receive"
+          Audio : requestUrl.query.attendeeAudioCapability,
+          Video : requestUrl.query.attendeeVideoCapability,
+          Content: requestUrl.query.attendeeContentCapability
         }
 
         // Return the meeting and attendee responses. The client will use these
@@ -317,6 +317,39 @@ function serve(host = '127.0.0.1:8080') {
           }
           respond(response, 200, 'audio/mpeg', data);
         });
+      } else if (request.method === 'PUT' && requestUrl.pathname === '/update_attendee_capabilities') {
+        let client = getClientForMeeting(meetingTable[requestUrl.query.title]);
+        const updateCapResponse = await client.updateAttendeeCapabilities({
+          MeetingId: meetingTable[requestUrl.query.title].Meeting.MeetingId,
+          AttendeeId: requestUrl.query.id,
+          Capabilities: {
+            Audio: requestUrl.query.audio_capability,
+            Video: requestUrl.query.video_capability,
+            Content: requestUrl.query.content_capability
+          }
+        }).promise();
+        respond(response, 200, 'application/json', JSON.stringify(updateCapResponse));
+      } else if (request.method === 'POST' && requestUrl.pathname === '/update_attendee_capabilities_except') {
+        let client = getClientForMeeting(meetingTable[requestUrl.query.title]);
+
+        const updateCapResponse = await client.batchUpdateAttendeeCapabilitiesExcept({
+          MeetingId: meetingTable[requestUrl.query.title].Meeting.MeetingId,
+          ExcludedAttendeeIds: requestUrl.query.ids.split(' ').map(id => { return { AttendeeId: id }} ),
+          Capabilities: {
+            Audio: requestUrl.query.audio_capability,
+            Video: requestUrl.query.video_capability,
+            Content: requestUrl.query.content_capability
+          }
+        }).promise();
+        respond(response, 200, 'application/json', JSON.stringify(updateCapResponse));
+      } else if (request.method === 'GET' && requestUrl.pathname === '/get_attendee') {
+        let client = getClientForMeeting(meetingTable[requestUrl.query.title]);
+
+        const getAttendeeResponse = await client.getAttendee({
+          MeetingId: meetingTable[requestUrl.query.title].Meeting.MeetingId,
+          AttendeeId: requestUrl.query.id
+        }).promise();
+        respond(response, 200, 'application/json', JSON.stringify(getAttendeeResponse));
       } else {
         respond(response, 404, 'text/html', '404 Not Found');
       }

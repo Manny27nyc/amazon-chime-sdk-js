@@ -81,6 +81,8 @@ module.exports = env => {
         '/deleteAttendee': 'http://127.0.0.1:8081',
         '/end': 'http://127.0.0.1:8081',
         '/fetch_credentials': 'http://127.0.0.1:8081',
+        '/update_attendee_capabilities': 'http://127.0.0.1:8081',
+        '/get_attendee': 'http://127.0.0.1:8081'
       }
     },
     plugins: [

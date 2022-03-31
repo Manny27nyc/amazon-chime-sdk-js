@@ -24,10 +24,7 @@ const chime = new AWS.Chime({ region: 'us-east-1' });
 chime.endpoint = new AWS.Endpoint(endpoint);
 
 const chimeSDKMeetings = new AWS.ChimeSDKMeetings({ region: currentRegion });
-console.info("chimeSDKMeetingsEndpoint");
-console.info(chimeSDKMeetingsEndpoint);
-console.info("useChimeSDKMeetings");
-console.info(useChimeSDKMeetings);
+
 if(chimeSDKMeetingsEndpoint != 'https://service.chime.aws.amazon.com' && useChimeSDKMeetings === 'true'){
   chimeSDKMeetings.endpoint = new AWS.Endpoint(chimeSDKMeetingsEndpoint);
 }
@@ -35,19 +32,11 @@ if(chimeSDKMeetingsEndpoint != 'https://service.chime.aws.amazon.com' && useChim
 // return chime meetings SDK client just for Echo Reduction for now.
 function getClientForMeeting(meeting) {
   return chimeSDKMeetings;
-  // if (useChimeSDKMeetings === 'true') {
-  //   return chimeSDKMeetings;
-  // }
-  // if (meeting?.Meeting?.MeetingFeatures?.Audio?.EchoReduction === 'AVAILABLE') {
-  //   return chimeSDKMeetings;
-  // }
-  // return chime;
 }
 
 // Read resource names from the environment
 const {
   MEETINGS_TABLE_NAME,
-  ATTENDEES_TABLE_NAME,
   BROWSER_LOG_GROUP_NAME,
   BROWSER_MEETING_EVENT_LOG_GROUP_NAME,
   SQS_QUEUE_ARN,
@@ -145,11 +134,6 @@ exports.join = async (event, context) => {
     }
   }).promise());
 
-  // Store the attendee in the table using the attendee name and meeting title as the key.
-  await putAttendee(query.name, query.title, attendee);
-
-  console.info('attendee');
-  console.info(attendee);
   // Return the meeting and attendee responses. The client will use these
   // to join the meeting.
   let joinResponse = {
@@ -192,35 +176,27 @@ exports.deleteAttendee = async (event, context) => {
 };
 
 exports.get_attendee = async (event, context) => {
-  console.info('Get Attendee');
   const query = event.queryStringParameters;
-  if (!query.title || !query.name) {
+  if (!query.title || !query.id) {
     return response(400, 'application/json',
-      JSON.stringify({error: 'Need parameters: title, name'}));
+      JSON.stringify({error: 'Need parameters: title, id'}));
   }
   const meeting = await getMeeting(query.title);
   let client = await getClientForMeeting(meeting);
-  const attendee =  await getAttendee(query.name, query.title);
-  console.info(meeting);
-  console.info(attendee);
-  console.info(meeting.Meeting.MeetingId);
-  console.info(attendee.Attendee.AttendeeId);
   const attendeeResponse = (await client.getAttendee({
     MeetingId: meeting.Meeting.MeetingId,
-    AttendeeId: attendee.Attendee.AttendeeId
+    AttendeeId: query.id
    }).promise());
-   console.info('attendeeResponse');
    console.info(attendeeResponse);
-   return response(200, 'application/json', JSON.stringify({attendeeResponse}, null, 2));
+   return response(200, 'application/json', JSON.stringify(attendeeResponse, null, 2));
 };
 
 exports.update_attendee_capabilities = async (event, context) => {
  // Update attendee capabilities
- console.info('Update attendee capabilities');
  const query = event.queryStringParameters;
- if (!query.title || !query.name || !query.audio_capability || !query.video_capability || !query.content_capability) {
+ if (!query.title || !query.id || !query.audio_capability || !query.video_capability || !query.content_capability) {
    return response(400, 'application/json',
-    JSON.stringify({error: 'Need parameters: title, name,audio_capability, video_capability, content_capability'}));
+    JSON.stringify({error: 'Need parameters: id, name,audio_capability, video_capability, content_capability'}));
  }
  const capabilities = {
    Audio: query.audio_capability,
@@ -229,21 +205,36 @@ exports.update_attendee_capabilities = async (event, context) => {
  }
  const meeting = await getMeeting(query.title);
  let client = getClientForMeeting(meeting);
- const attendee =  await getAttendee(query.name, query.title);
- console.info(meeting);
- console.info(attendee);
- console.info(meeting.Meeting.MeetingId);
- console.info(attendee.Attendee.AttendeeId);
- const attendeeCapsResponnse = (await client.updateAttendeeCapabilities({
+ const attendeeCapsResponse = (await client.updateAttendeeCapabilities({
   MeetingId: meeting.Meeting.MeetingId,
-  AttendeeId: attendee.Attendee.AttendeeId,
+  AttendeeId: query.id,
   Capabilities: capabilities
  }).promise());
- console.info('UpdateAttendeesResponse');
- console.info(attendeeCapsResponnse);
- // Store the attendee in the table using the attendee name and meeting title as the key.
- await putAttendee(query.name, query.title, attendee);
- return response(200, 'application/json', JSON.stringify({attendeeCapsResponnse}));
+
+ return response(200, 'application/json', JSON.stringify(attendeeCapsResponse));
+};
+
+exports.update_attendee_capabilities_except = async (event, context) => {
+  // Update attendee capabilities
+  const query = event.queryStringParameters;
+  if (!query.title || !query.ids || !query.audio_capability || !query.video_capability || !query.content_capability) {
+    return response(400, 'application/json',
+      JSON.stringify({error: 'Need parameters: id, name,audio_capability, video_capability, content_capability'}));
+  }
+  const capabilities = {
+    Audio: query.audio_capability,
+    Video: query.video_capability,
+    Content: query.content_capability
+  }
+  const meeting = await getMeeting(query.title);
+  let client = getClientForMeeting(meeting);
+  const attendeeCapsExceptResponse = (await client.batchUpdateAttendeeCapabilitiesExcept({
+    MeetingId: meeting.Meeting.MeetingId,
+    ExcludedAttendeeIds: query.ids.split(' ').map(id => { return { AttendeeId: id }} ),
+    Capabilities: capabilities
+  }).promise());
+  console.info(attendeeCapsExceptResponse);
+  return response(200, 'application/json', JSON.stringify(attendeeCapsExceptResponse));
 };
 
 
@@ -481,37 +472,6 @@ async function putMeeting(title, meeting) {
     Item: {
       'Title': { S: title },
       'Data': { S: JSON.stringify(meeting) },
-      'TTL': {
-        N: `${Math.floor(Date.now() / 1000) + 60 * 60 * 24}` // clean up meeting record one day from now
-      }
-    }
-  }).promise();
-}
-
-// Retrieves the attendee from the table by the attendee name and meeting title
-async function getAttendee(name, title) {
-  const result = await ddb.getItem({
-    TableName: ATTENDEES_TABLE_NAME,
-    Key: {
-      'Title': {
-        S: title
-      },
-      'Name': {
-        S: name
-      },
-    },
-  }).promise();
-  return result.Item ? JSON.parse(result.Item.Data.S) : null;
-}
-
-// Stores the attendee in the table using the attendee name and meeting title as the key
-async function putAttendee(name, title, attendee) {
-  await ddb.putItem({
-    TableName: ATTENDEES_TABLE_NAME,
-    Item: {
-      'Name': {S: name},
-      'Title': { S: title },
-      'Data': { S: JSON.stringify(attendee) },
       'TTL': {
         N: `${Math.floor(Date.now() / 1000) + 60 * 60 * 24}` // clean up meeting record one day from now
       }
