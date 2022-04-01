@@ -2023,9 +2023,7 @@ export class DemoMeetingApp
       video_cap.id = "video-" + attendeeId;
       const content_cap = entries[i].getElementsByTagName('select')[2] as HTMLSelectElement;
       content_cap.id = "content-" + attendeeId;
-      audio_cap.options.item(Object.values(AttendeeCapabilityType).indexOf(this.meetingSession.configuration.attendeeCapabilities.attendeeAudioCapability)).selected = true;
-      video_cap.options.item(Object.values(AttendeeCapabilityType).indexOf(this.meetingSession.configuration.attendeeCapabilities.attendeeVideoCapability)).selected = true;
-      content_cap.options.item(Object.values(AttendeeCapabilityType).indexOf(this.meetingSession.configuration.attendeeCapabilities.attendeeContentCapability)).selected = true;
+
       const updateButtons = document.getElementsByClassName('button-update-attendee-cap');
       updateButtons[i].addEventListener('click', () => {
         this.updateAttendeeCapabilities(

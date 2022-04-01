@@ -161,8 +161,6 @@ export default class MeetingSessionConfiguration {
       }
     }
     if (createAttendeeResponse) {
-      console.log("createAttendeeResponse");
-      console.log(createAttendeeResponse);
       createAttendeeResponse = toLowerCasePropertyNames(createAttendeeResponse);
       if (createAttendeeResponse.attendee) {
         createAttendeeResponse = createAttendeeResponse.attendee;
