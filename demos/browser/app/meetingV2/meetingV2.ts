@@ -1990,7 +1990,7 @@ export class DemoMeetingApp
         nameSpan.innerText = this.roster[attendeeId].name;
         div.appendChild(nameSpan);
         div.appendChild(document.createElement("span"));
-        if(attendeeId.endsWith("#content")) {
+        if(attendeeId.endsWith("#content") || this.primaryExternalMeetingId) {
           roster.appendChild(li);
           continue;
         }
@@ -2031,6 +2031,9 @@ export class DemoMeetingApp
         });
         li.appendChild(getButton);
         roster.appendChild(li);
+        const idSpan = document.createElement("span")
+        idSpan.innerText = attendeeId;
+        li.appendChild(idSpan);
         this.getAttendeeCapabilities(attendeeId);
       }
     } else if (roster.getElementsByTagName("li").length > newRosterCount) {
