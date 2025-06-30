@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {Builder} = require('selenium-webdriver');
 const {getBuildId, getRunDetails} = require('./BrowserStackLogs');
 const {AppPage} = require('../pages/AppPage');

@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {StartMeetingTranscriptionStep, StopMeetingTranscriptionStep, PlayPrerecordedSpeechStep, SelectNoneAudioInputStep} = require('./steps');
 const {RosterCheck, TranscriptionStartedCheck, TranscriptionStoppedCheck, TranscriptsReceivedCheck} = require('./checks');
 const {TestUtils} = require('kite-common');

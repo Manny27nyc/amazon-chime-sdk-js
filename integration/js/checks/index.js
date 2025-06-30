@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 exports.UserJoinedMeetingCheck = require('./UserJoinedMeetingCheck');
 exports.LocalVideoCheck = require('./LocalVideoCheck');
 exports.RemoteVideoCheck = require('./RemoteVideoCheck');

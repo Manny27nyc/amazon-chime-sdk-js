@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 // Send test report is a minimal script that makes a HTTP POST call to a webhook to send a slack message.
 // For example, this script passes results of the browser compatibility report to the webhook so that the amazon-chime-js-sdk team can be notified of the results.
 

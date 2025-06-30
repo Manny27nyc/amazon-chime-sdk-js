@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {Reconnect, ClickVideoButton, CloseAppStep} = require('./steps');
 const {RosterCheck, RemoteVideoCheck} = require('./checks');
 const {TestUtils} = require('./node_modules/kite-common');

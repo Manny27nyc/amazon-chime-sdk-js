@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const { KiteBaseTest, TestUtils } = require('../node_modules/kite-common');
 const { AllureTestReport } = require('../node_modules/kite-common/report');
 const { SetTestBrokenStep } = require('../steps');

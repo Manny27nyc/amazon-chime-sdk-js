@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {OpenAppStep, WaitForMeetingToBeCreated, JoinVideoTestMeetingStep, ClickStartLocalVideoButton, ClickStopLocalVideoButton, ClickHasStartedLocalVideoTileButton, ClickAddVideoTileButton, ClickGetLocalVideoTileButton, ClickHaveVideoTileForAttendeeIdButton, ClickGetAllVideoTilesButton, ClickGetAllRemoteVideoTilesButton, ClickHaveVideoTilesWithStreamsButton, ClickRemoveAllVideoTilesButton, WaitForRemoteParticipantsToJoinMeeting, WaitForRemoteParticipantsToTurnVideoOn, WaitForRemoteParticipantsToTurnVideoOff, GetBoundAttendeeIdStep} = require('./steps');
 const {TestUtils} = require('./node_modules/kite-common');
 const SdkBaseTest = require('./utils/SdkBaseTest');

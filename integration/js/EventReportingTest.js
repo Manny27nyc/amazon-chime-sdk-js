@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {OpenAppStep, JoinMeetingStep, AuthenticateUserStep, LeaveMeetingStep} = require('./steps');
 const {UserJoinedMeetingCheck, UserAuthenticationCheck, RosterCheck} = require('./checks');
 const {TestUtils} = require('./node_modules/kite-common');

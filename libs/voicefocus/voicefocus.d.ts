@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 import { AGCOptions, ExecutionPreference, ExecutionQuanta, Logger, ModelCategory, ModelConfig, ModelName, ModelVariant, PerformanceThresholds, SIMDPreference, UsagePreference, VoiceFocusAudioWorkletNode, VoiceFocusConfigureOptions, VoiceFocusDelegate, VoiceFocusFetchBehavior, VoiceFocusFetchConfig, VoiceFocusPaths } from './types.js';
 import { Unsupported } from './decider.js';
 export interface AssetSpec {

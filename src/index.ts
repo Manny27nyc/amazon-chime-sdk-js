@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 import AGCOptions from './voicefocus/AGCOptions';
 import ActiveSpeakerDetector from './activespeakerdetector/ActiveSpeakerDetector';
 import ActiveSpeakerDetectorFacade from './activespeakerdetector/ActiveSpeakerDetectorFacade';

@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const { spawnSync } = require('child_process');
 const fs = require('fs-extra');
 const path = require("path");

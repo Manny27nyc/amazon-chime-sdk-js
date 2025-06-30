@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const axios = require('axios');
 const Base64 = require('js-base64').Base64;
 

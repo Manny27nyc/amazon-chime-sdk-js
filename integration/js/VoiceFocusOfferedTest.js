@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {OpenAppStep, AuthenticateUserStep } = require('./steps');
 const {VoiceFocusOfferedCheck, UserAuthenticationCheck } = require('./checks');
 const {TestUtils} = require('./node_modules/kite-common');

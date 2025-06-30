@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isValidRevisionID = exports.isValidAssetGroup = exports.resolveURL = exports.addQueryParams = exports.withQueryString = exports.withRequestHeaders = exports.fetchWithBehavior = void 0;

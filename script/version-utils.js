@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 #!/usr/bin/env node
 
 const { logger, spawnOrFail, prompt, shouldContinuePrompt, quit, fs, path } = require('./cli-utils');

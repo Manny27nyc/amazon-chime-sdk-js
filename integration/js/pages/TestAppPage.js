@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {By} = require('selenium-webdriver');
 const {TestUtils} = require('kite-common');
 const { v4: uuidv4 } = require('uuid');

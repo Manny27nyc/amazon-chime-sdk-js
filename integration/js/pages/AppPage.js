@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {By, Key, until} = require('selenium-webdriver');
 const {TestUtils} = require('kite-common');
 const {performance} = require('perf_hooks');

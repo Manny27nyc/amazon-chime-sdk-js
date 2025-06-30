@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {ClickContentShareButton, ClickContentSharePauseButton} = require('./steps');
 const {ContentShareVideoCheck} = require('./checks');
 const {RosterCheck} = require('./checks');

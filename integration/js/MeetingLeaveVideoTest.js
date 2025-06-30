@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {OpenAppStep, JoinMeetingStep, AuthenticateUserStep, ClickVideoButton, LeaveMeetingStep} = require('./steps');
 const {UserJoinedMeetingCheck, RemoteVideoCheck, UserAuthenticationCheck, RosterCheck} = require('./checks');
 const {AppPage} = require('./pages/AppPage');

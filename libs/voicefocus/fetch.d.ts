@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 import { VoiceFocusFetchBehavior } from './types';
 export declare function fetchWithBehavior(url: string, init?: RequestInit, fetchBehavior?: VoiceFocusFetchBehavior): Promise<Response>;
 export declare function withRequestHeaders(init?: RequestInit, fetchBehavior?: VoiceFocusFetchBehavior): RequestInit | undefined;

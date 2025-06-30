@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const { OpenAppStep, JoinMeetingStep, AuthenticateUserStep, ClickVideoButton, ClickVideoFilterButton, WaitForRemoteVideoCheckToComplete, WaitForRemoteParticipantsToTurnVideoOff, WaitForRemoteParticipantsToTurnVideoOn, WaitForRemoteParticipantsToJoinMeeting, WaitForMeetingToBeCreated } = require('./steps');
 const { UserJoinedMeetingCheck, LocalVideoCheck, RemoteVideoCheck, UserAuthenticationCheck, RosterCheck, RosterCheckConfig } = require('./checks');
 const { TestUtils } = require('./node_modules/kite-common');

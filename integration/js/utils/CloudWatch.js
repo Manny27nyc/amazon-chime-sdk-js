@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const AWS = require('../node_modules/aws-sdk');
 AWS.config.update({ region: 'us-east-1' });
 var cloudWatch = new AWS.CloudWatch({

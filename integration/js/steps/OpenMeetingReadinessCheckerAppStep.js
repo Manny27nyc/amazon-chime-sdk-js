@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {KiteTestError, Status} = require('kite-common');
 const { v4: uuidv4 } = require('uuid');
 const AppTestStep = require('../utils/AppTestStep');

@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {KiteTestError, Status, TestUtils} = require('kite-common');
 const demo = require('../pages/AppPage');
 const AppTestStep = require('../utils/AppTestStep');

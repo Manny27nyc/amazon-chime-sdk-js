@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const { OpenAppStep, JoinMeetingStep, AuthenticateUserStep, PlayRandomToneStep, ClickMicrophoneButton, WaitForRemoteParticipantsToTurnAudioOff, WaitForRemoteParticipantsToTurnAudioOn, WaitForRemoteParticipantsToJoinMeeting, WaitForRemoteAudioCheckToComplete, WaitForMeetingToBeCreated } = require('./steps');
 const { UserJoinedMeetingCheck, UserAuthenticationCheck, RemoteAudioCheck, RosterCheck } = require('./checks');
 const { TestUtils } = require('./node_modules/kite-common');

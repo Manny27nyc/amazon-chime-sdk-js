@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 /*
  * This script exists because npm 7 (a) no longer supports npm_config_* (see
  * NPM RFC 21), and (b) turns invocations like `npm run build --app=foo` into

@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {Builder, Capabilities, logging} = require('selenium-webdriver');
 const safari = require('../node_modules/selenium-webdriver/safari');
 const axios = require('axios');

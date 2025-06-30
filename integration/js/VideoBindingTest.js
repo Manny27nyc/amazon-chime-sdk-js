@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {TestUtils} = require('./node_modules/kite-common');
 const SdkBaseTest = require('./utils/SdkBaseTest');
 const {OpenAppStep, AuthenticateUserStep, ClickStartLocalVideoButton, ClickStopLocalVideoButton, ClickUnbindVideoElementButton, ClickBindVideoElementButton} = require('./steps');

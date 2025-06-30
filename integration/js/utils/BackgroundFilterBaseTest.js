@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {ClickVideoButton, ClickBackgroundReplacementButton, ClickBackgroundBlurButton} = require('../steps');
 const {LocalVideoCheck, RemoteVideoCheck, VideoBackgroundBlurCheck} = require('../checks');
 const {SdkTestUtils} = require('./SdkTestUtils');

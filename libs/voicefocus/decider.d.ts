@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 import { ExecutionApproach, ExecutionQuanta, Logger, ModelConfig, ModelName, ModelVariant, PerformanceThresholds, VoiceFocusExecutionSpec, VoiceFocusFetchConfig, VoiceFocusProcessor } from './types.js';
 interface SupportedExecutionDefinition {
     supported: true;

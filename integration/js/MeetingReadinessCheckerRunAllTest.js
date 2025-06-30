@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {OpenMeetingReadinessCheckerAppStep, StartMeetingReadinessCheckerStep, WaitForContentShareTestToBeReady, WaitForStartMeetingReadinessCheckerButtonToBeEnabled, WaitForMeetingCreationAndMeetingReadinessCheckerInitializationStep, StartContentShareConnectivityCheckStep} = require('./steps');
 const {MeetingReadinessCheckerNetworkTcpCheck, MeetingReadinessCheckerAudioOutputCheck, MeetingReadinessCheckerVideoConnectivityCheck, MeetingReadinessCheckerContentShareConnectivityCheck, MeetingReadinessCheckerAudioConnectivityCheck, MeetingReadinessCheckerNetworkUdpCheck} = require('./checks');
 const {MeetingReadinessCheckerPage} = require('./pages/MeetingReadinessCheckerPage');

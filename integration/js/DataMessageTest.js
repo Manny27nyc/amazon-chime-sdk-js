@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {SendDataMessage} = require('./steps');
 const {DataMessageCheck, RosterCheck} = require('./checks');
 const {TestUtils} = require('./node_modules/kite-common');

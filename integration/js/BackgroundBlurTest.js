@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {TestUtils} = require('kite-common');
 const BackgroundFilterBaseTest = require("./utils/BackgroundFilterBaseTest");
 

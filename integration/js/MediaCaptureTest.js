@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const { AuthenticateUserStep, JoinMeetingStep, OpenAppStep, ClickContentShareButton, ClickVideoButton, ClickMediaCaptureButton, EndMeetingStep } = require('./steps');
 const { ContentShareVideoCheck, LocalVideoCheck, RosterCheck, UserAuthenticationCheck, UserJoinedMeetingCheck } = require('./checks');
 const { AppPage } = require('./pages/AppPage');

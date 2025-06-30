@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {OpenAppStep, JoinMeetingStep, AuthenticateUserStep} = require('../steps');
 const {UserJoinedMeetingCheck, UserAuthenticationCheck} = require('../checks');
 

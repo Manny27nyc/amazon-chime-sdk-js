@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {WebDriverFactory} = require('../node_modules/kite-common');
 const {AppPage, TestAppPage} = require('../pages');
 const {MeetingReadinessCheckerPage} = require('../pages/MeetingReadinessCheckerPage');

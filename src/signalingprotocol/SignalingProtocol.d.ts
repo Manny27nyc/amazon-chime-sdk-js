@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 import * as Long from "long";
 import * as $protobuf from "protobufjs";
 /** Properties of a SdkSignalFrame. */

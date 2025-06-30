@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const clickElement = async (driver, element) => {
     await driver.executeScript("arguments[0].click();", element);
 }

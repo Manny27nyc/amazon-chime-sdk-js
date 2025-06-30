@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const AppWaitTestStep = require('../utils/AppWaitTestStep');
 
 class WaitForRemoteParticipantsToJoinMeeting extends AppWaitTestStep {

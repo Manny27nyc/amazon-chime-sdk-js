@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const { KiteTestError, TestStep, Status } = require('kite-common');
 const { emitMetric } = require('./CloudWatch');
 

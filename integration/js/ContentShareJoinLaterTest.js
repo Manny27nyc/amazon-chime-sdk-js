@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {ClickContentShareButton} = require('./steps');
 const {ContentShareVideoCheck, RosterCheck} = require('./checks');
 const {TestUtils} = require('./node_modules/kite-common');

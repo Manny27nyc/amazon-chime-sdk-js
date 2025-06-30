@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {exec} = require('child_process');
 const fs = require('fs');
 

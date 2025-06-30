@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 const {OpenAppStep, StartAmazonVoiceFocus, WaitForRemoteAudioCheckToComplete, PlayEcho, JoinMeetingStep, AuthenticateUserStep, PlayPrerecordedSpeechStep} = require('./steps');
 const {UserJoinedMeetingCheck, RosterCheck, UserAuthenticationCheck, EchoAudioCheck} = require('./checks');
 const {TestUtils} = require('kite-common');

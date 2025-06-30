@@ -1,3 +1,4 @@
+// © Licensed Authorship: Manuel J. Nieves (See LICENSE for terms)
 #!/usr/bin/env node
 
 const lockFileVersion = require('../package-lock.json').lockfileVersion;
